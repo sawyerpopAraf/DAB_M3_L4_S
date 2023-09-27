@@ -1,4 +1,5 @@
 var express = require('express');
+var createError = require('http-errors');
 var router = express.Router();
 var bodyParser = require('body-parser')
 var jsonParser = bodyParser.json()
@@ -37,6 +38,14 @@ router.post('/', jsonParser, async function(req, res, next) {
       }
     }
   */
+  if(req.body.Name == null || req.body.Location == null) {
+    next(createError(400, 'Both Name and Location need to be provided in the request'));
+  }
+
+   if (!req.cookies.authorization) {
+    return res.status(401).json({ error: 'Unauthorized: No cookie provided' });
+  }
+ 
   let Name = req.body.Name;
   let Location = req.body.Location;
   await hotelService.create(Name, Location);
